@@ -1,10 +1,9 @@
-import math #Mengimpor modul math untuk menggunakan fungsi ceil() (pembulatan ke atas).
+
 
 def bucket_sort_iterasi(arr, k=None):
     if not arr:
         return []
 
-    # Penjelasan:
     # n: jumlah elemen dalam array
     # k: jumlah bucket (jika tidak ditentukan, gunakan n)
     # min_v & max_v: nilai terkecil dan terbesar dalam array
@@ -13,12 +12,18 @@ def bucket_sort_iterasi(arr, k=None):
     n = len(arr)
     k = n if k is None else k
     min_v, max_v = min(arr), max(arr)
-    bucket_range = math.ceil((max_v - min_v + 1) / k)
+
+    # ✅ Pembulatan ke atas tanpa math.ceil()
+    # (max_v - min_v + 1): total rentang nilai data
+    # + (k - 1): trik pembulatan ke atas secara manual
+    # // k: pembagian bulat untuk mendapatkan panjang rentang tiap bucket
+    bucket_range = ((max_v - min_v + 1) + (k - 1)) // k
 
     print("=== TAHAP 1: PENEMPATAN KE BUCKET ===")
     print(f"min={min_v}, max={max_v}, k={k}, bucket_range={bucket_range}\n")
 
     # 1 Membuat bucket kosong
+    # Membuat list kosong sejumlah k untuk menampung data berdasarkan rentangnya
     buckets = [[] for _ in range(k)]
 
     # 2 Iterasi: masukkan elemen ke bucket
@@ -46,20 +51,23 @@ def bucket_sort_iterasi(arr, k=None):
     for i, b in enumerate(buckets):
         if len(b) > 1:
             print(f"Bucket[{i}] sebelum sort: {b}")
-            # insertion sort detail
+            # Proses sorting menggunakan Insertion Sort
             for j in range(1, len(b)):
-                key = b[j]
-                k_idx = j - 1
+                key = b[j]                  # key: elemen yang akan diposisikan
+                k_idx = j - 1              # k_idx: posisi elemen sebelumnya
                 print(f"  i={j}, key={key}")
+                # Bandingkan key dengan elemen sebelumnya satu per satu
                 while k_idx >= 0 and b[k_idx] > key:
                     print(f"    compare {b[k_idx]} > {key}? YES -> geser")
-                    b[k_idx + 1] = b[k_idx]
+                    b[k_idx + 1] = b[k_idx] # geser elemen ke kanan
                     k_idx -= 1
+                # Tempatkan key pada posisi yang benar
                 b[k_idx + 1] = key
                 print("    status sementara:", b)
             print(f"Bucket[{i}] setelah sort:", b, "\n")
         else:
             if b:
+                # Jika hanya ada 1 elemen, tidak perlu sorting
                 print(f"Bucket[{i}] tidak perlu sort (isi 1 elemen): {b}")
 
     # 4 Iterasi: gabungkan hasil dari semua bucket
@@ -71,9 +79,10 @@ def bucket_sort_iterasi(arr, k=None):
     result = []
     for i, b in enumerate(buckets):
         print(f"Gabungkan bucket[{i}]: {b}")
-        result.extend(b)
+        result.extend(b)  # extend: menggabungkan isi bucket ke hasil akhir
         print("Status hasil sementara:", result)
 
+    # Menampilkan hasil akhir setelah semua bucket digabungkan
     print("\n=== HASIL AKHIR ===")
     print("Array terurut:", result)
     return result
@@ -81,6 +90,3 @@ def bucket_sort_iterasi(arr, k=None):
 # Contoh penggunaan
 data = [35, 12, 78, 45, 22, 90, 15, 68, 55, 31]
 sorted_arr = bucket_sort_iterasi(data)
-
-
-
